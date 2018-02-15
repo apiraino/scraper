@@ -1,10 +1,11 @@
-use selectors::Element;
-use selectors::attr::{AttrSelectorOperation, NamespaceConstraint};
-use html5ever::{Namespace, LocalName};
+use selectors::{Element, OpaqueElement};
+use selectors::attr::{AttrSelectorOperation, CaseSensitivity, NamespaceConstraint};
+use selectors::context::VisitedHandlingMode;
+use html5ever::{LocalName, Namespace};
 use selectors::matching;
 
 use super::ElementRef;
-use selector::{Simple, NonTSPseudoClass, PseudoElement};
+use selector::{NonTSPseudoClass, PseudoElement, Simple};
 
 /// Note: will never match against non-tree-structure pseudo-classes.
 impl<'a> Element for ElementRef<'a> {
@@ -55,14 +56,11 @@ impl<'a> Element for ElementRef<'a> {
     fn match_non_ts_pseudo_class<F>(
         &self,
         _pc: &NonTSPseudoClass,
-        _context: &mut matching::MatchingContext,
+        _context: &mut matching::MatchingContext<Self::Impl>,
+        _visited_handling: VisitedHandlingMode,
         _flags_setter: &mut F,
     ) -> bool {
         false
-    }
-
-    fn get_id(&self) -> Option<LocalName> {
-        self.value().id.clone()
     }
 
     fn has_class(&self, name: &LocalName) -> bool {
@@ -70,8 +68,9 @@ impl<'a> Element for ElementRef<'a> {
     }
 
     fn is_empty(&self) -> bool {
-        !self.children()
-            .any(|child| child.value().is_element() || child.value().is_text())
+        !self.children().any(|child| {
+            child.value().is_element() || child.value().is_text()
+        })
     }
 
     fn is_root(&self) -> bool {
@@ -86,16 +85,27 @@ impl<'a> Element for ElementRef<'a> {
         operation: &AttrSelectorOperation<&String>,
     ) -> bool {
         self.value().attrs.iter().any(|(key, value)| {
-            !matches!(*ns, NamespaceConstraint::Specific(url) if *url != key.ns) &&
-                *local_name == key.local && operation.eval_str(value)
+            !matches!(*ns, NamespaceConstraint::Specific(url) if *url != key.ns)
+                && *local_name == key.local && operation.eval_str(value)
         })
     }
 
     fn match_pseudo_element(
         &self,
         _pe: &PseudoElement,
-        _context: &mut matching::MatchingContext,
+        _context: &mut matching::MatchingContext<Self::Impl>,
     ) -> bool {
         false
     }
+
+    // TODO
+    fn is_link(&self) -> bool {
+        true
+    }
+
+    fn opaque(&self) -> OpaqueElement {
+        OpaqueElement::new()
+    }
+
+    // fn has_id(&self, id: , case_sensitivity: CaseSensitivity) -> bool {}
 }

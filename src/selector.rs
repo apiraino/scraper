@@ -3,7 +3,7 @@
 use std::fmt;
 use html5ever::{LocalName, Namespace};
 use cssparser;
-use selectors::{parser, matching, visitor};
+use selectors::{matching, parser, visitor};
 
 use ElementRef;
 
@@ -37,7 +37,7 @@ impl Selector {
 
 /// An implementation of `Parser` for `selectors`
 struct Parser;
-impl parser::Parser for Parser {
+impl<'i> parser::Parser<'i> for Parser {
     type Impl = Simple;
 }
 
@@ -64,7 +64,7 @@ impl parser::SelectorImpl for Simple {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum NonTSPseudoClass {}
 
-impl parser::SelectorMethods for NonTSPseudoClass {
+impl parser::Visit for NonTSPseudoClass {
     type Impl = Simple;
 
     fn visit<V>(&self, _visitor: &mut V) -> bool
