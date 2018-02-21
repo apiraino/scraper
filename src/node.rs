@@ -38,57 +38,90 @@ pub enum Node {
 impl Node {
     /// Returns true if node is the document root.
     pub fn is_document(&self) -> bool {
-        match *self { Node::Document => true, _ => false }
+        match *self {
+            Node::Document => true,
+            _ => false,
+        }
     }
 
     /// Returns true if node is the fragment root.
     pub fn is_fragment(&self) -> bool {
-        match *self { Node::Fragment => true, _ => false }
+        match *self {
+            Node::Fragment => true,
+            _ => false,
+        }
     }
 
     /// Returns true if node is a doctype.
     pub fn is_doctype(&self) -> bool {
-        match *self { Node::Doctype(_) => true, _ => false }
+        match *self {
+            Node::Doctype(_) => true,
+            _ => false,
+        }
     }
 
     /// Returns true if node is a comment.
     pub fn is_comment(&self) -> bool {
-        match *self { Node::Comment(_) => true, _ => false }
+        match *self {
+            Node::Comment(_) => true,
+            _ => false,
+        }
     }
 
     /// Returns true if node is text.
     pub fn is_text(&self) -> bool {
-        match *self { Node::Text(_) => true, _ => false }
+        match *self {
+            Node::Text(_) => true,
+            _ => false,
+        }
     }
 
     /// Returns true if node is an element.
     pub fn is_element(&self) -> bool {
-        match *self { Node::Element(_) => true, _ => false }
+        match *self {
+            Node::Element(_) => true,
+            _ => false,
+        }
     }
 
     /// Returns self as a doctype.
     pub fn as_doctype(&self) -> Option<&Doctype> {
-        match *self { Node::Doctype(ref d) => Some(d), _ => None }
+        match *self {
+            Node::Doctype(ref d) => Some(d),
+            _ => None,
+        }
     }
 
     /// Returns self as a comment.
     pub fn as_comment(&self) -> Option<&Comment> {
-        match *self { Node::Comment(ref c) => Some(c), _ => None }
+        match *self {
+            Node::Comment(ref c) => Some(c),
+            _ => None,
+        }
     }
 
     /// Returns self as text.
     pub fn as_text(&self) -> Option<&Text> {
-        match *self { Node::Text(ref t) => Some(t), _ => None }
+        match *self {
+            Node::Text(ref t) => Some(t),
+            _ => None,
+        }
     }
 
     /// Returns self as an element.
     pub fn as_element(&self) -> Option<&Element> {
-        match *self { Node::Element(ref e) => Some(e), _ => None }
+        match *self {
+            Node::Element(ref e) => Some(e),
+            _ => None,
+        }
     }
 
     /// Returns self as an element.
     pub fn as_processing_instruction(&self) -> Option<&ProcessingInstruction> {
-        match *self { Node::ProcessingInstruction(ref pi) => Some(pi), _ => None }
+        match *self {
+            Node::ProcessingInstruction(ref pi) => Some(pi),
+            _ => None,
+        }
     }
 }
 
@@ -210,11 +243,10 @@ pub struct Element {
 impl Element {
     #[doc(hidden)]
     pub fn new(name: QualName, attrs: Vec<Attribute>) -> Self {
-        let id = attrs.iter().find(|a| a.name.local.deref() == "id").map(
-            |a| {
-                LocalName::from(a.value.deref())
-            },
-        );
+        let id = attrs
+            .iter()
+            .find(|a| a.name.local.deref() == "id")
+            .map(|a| LocalName::from(a.value.deref()));
 
         let classes: HashSet<LocalName> = attrs
             .iter()
@@ -265,7 +297,9 @@ impl Element {
 
     /// Returns an iterator over the element's attributes.
     pub fn attrs(&self) -> Attrs {
-        Attrs { inner: self.attrs.iter() }
+        Attrs {
+            inner: self.attrs.iter(),
+        }
     }
 }
 

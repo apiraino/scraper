@@ -63,14 +63,14 @@ impl<'a> Element for ElementRef<'a> {
         false
     }
 
-    fn has_class(&self, name: &LocalName) -> bool {
-        self.value().classes.contains(name)
+    fn has_class(&self, name: &LocalName, case_sensitivity: CaseSensitivity) -> bool {
+        //self.value().classes.contains(name)
+        self.value().has_class(name, case_sensitivity)
     }
 
     fn is_empty(&self) -> bool {
-        !self.children().any(|child| {
-            child.value().is_element() || child.value().is_text()
-        })
+        !self.children()
+            .any(|child| child.value().is_element() || child.value().is_text())
     }
 
     fn is_root(&self) -> bool {
