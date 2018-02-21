@@ -2,11 +2,13 @@
 
 use std::fmt;
 use std::ops::Deref;
-use std::collections::{HashSet, HashMap};
-use std::collections::{hash_set, hash_map};
+use std::collections::{HashMap, HashSet};
+use std::collections::{hash_map, hash_set};
 
-use html5ever::{QualName, LocalName, Attribute};
+use html5ever::{Attribute, LocalName, QualName};
 use html5ever::tendril::StrTendril;
+
+use selectors::attr::CaseSensitivity;
 
 /// An HTML node.
 #[derive(Clone, PartialEq, Eq)]
@@ -244,13 +246,15 @@ impl Element {
     }
 
     /// Returns true if element has the class.
-    pub fn has_class(&self, class: &str) -> bool {
+    pub fn has_class(&self, class: &str, case_sensitive: CaseSensitivity) -> bool {
         self.classes.contains(&LocalName::from(class))
     }
 
     /// Returns an iterator over the element's classes.
     pub fn classes(&self) -> Classes {
-        Classes { inner: self.classes.iter() }
+        Classes {
+            inner: self.classes.iter(),
+        }
     }
 
     /// Returns the value of an attribute.

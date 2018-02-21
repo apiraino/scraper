@@ -100,12 +100,14 @@ impl<'a> Element for ElementRef<'a> {
 
     // TODO
     fn is_link(&self) -> bool {
-        true
+        false
     }
 
     fn opaque(&self) -> OpaqueElement {
-        OpaqueElement::new()
+        OpaqueElement::new(&self)
     }
 
-    // fn has_id(&self, id: , case_sensitivity: CaseSensitivity) -> bool {}
+    fn has_id(&self, id: &LocalName, case_sensitivity: CaseSensitivity) -> bool {
+        false
+    }
 }
