@@ -64,7 +64,6 @@ impl<'a> Element for ElementRef<'a> {
     }
 
     fn has_class(&self, name: &LocalName, case_sensitivity: CaseSensitivity) -> bool {
-        //self.value().classes.contains(name)
         self.value().has_class(name, case_sensitivity)
     }
 
@@ -100,7 +99,10 @@ impl<'a> Element for ElementRef<'a> {
 
     // TODO
     fn is_link(&self) -> bool {
-        false
+        match self.value().attr("href") {
+            Some(_) => true,
+            None => false,
+        }
     }
 
     fn opaque(&self) -> OpaqueElement {
@@ -123,12 +125,14 @@ mod tests {
     use selectors::attr::CaseSensitivity;
 
     #[test]
-    fn test_link() {
+    fn test_has_id() {
         use html5ever::LocalName;
-        let html = "<a id='link_id_456' href='https://www.example.com'>Example website</a>";
+
+        let html = "<p id='link_id_456'>hey there</p>";
         let fragment = Html::parse_fragment(html);
-        let a_selector = Selector::parse("a").unwrap();
-        let element = fragment.select(&a_selector).next().unwrap();
+        let sel = Selector::parse("p").unwrap();
+
+        let element = fragment.select(&sel).next().unwrap();
         assert_eq!(
             true,
             element.has_id(
@@ -136,5 +140,32 @@ mod tests {
                 CaseSensitivity::CaseSensitive
             )
         );
+
+        let html = "<p>hey there</p>";
+        let fragment = Html::parse_fragment(html);
+        let element = fragment.select(&sel).next().unwrap();
+        assert_eq!(
+            false,
+            element.has_id(
+                &LocalName::from("any_link_id"),
+                CaseSensitivity::CaseSensitive
+            )
+        );
     }
+
+    #[test]
+    fn test_is_link() {
+        let html = "<a href='https://www.example.com'>Example website</a>";
+        let fragment = Html::parse_fragment(html);
+        let sel = Selector::parse("a").unwrap();
+        let element = fragment.select(&sel).next().unwrap();
+        assert_eq!(true, element.is_link());
+
+        let html = "<p>hey there</p>";
+        let fragment = Html::parse_fragment(html);
+        let sel = Selector::parse("p").unwrap();
+        let element = fragment.select(&sel).next().unwrap();
+        assert_eq!(false, element.is_link());
+    }
+
 }
