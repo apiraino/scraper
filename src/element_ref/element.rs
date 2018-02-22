@@ -108,6 +108,33 @@ impl<'a> Element for ElementRef<'a> {
     }
 
     fn has_id(&self, id: &LocalName, case_sensitivity: CaseSensitivity) -> bool {
-        false
+        match self.value().id {
+            Some(ref val) => case_sensitivity.eq(id.as_bytes(), val.as_bytes()),
+            None => false,
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use html::Html;
+    use selector::Selector;
+    use selectors::Element;
+    use selectors::attr::CaseSensitivity;
+
+    #[test]
+    fn test_link() {
+        use html5ever::LocalName;
+        let html = "<a id='link_id_456' href='https://www.example.com'>Example website</a>";
+        let fragment = Html::parse_fragment(html);
+        let a_selector = Selector::parse("a").unwrap();
+        let element = fragment.select(&a_selector).next().unwrap();
+        assert_eq!(
+            true,
+            element.has_id(
+                &LocalName::from("link_id_456"),
+                CaseSensitivity::CaseSensitive
+            )
+        );
     }
 }
