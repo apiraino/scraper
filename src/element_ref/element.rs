@@ -97,7 +97,6 @@ impl<'a> Element for ElementRef<'a> {
         false
     }
 
-    // TODO
     fn is_link(&self) -> bool {
         match self.value().attr("href") {
             Some(_) => true,
@@ -166,6 +165,28 @@ mod tests {
         let sel = Selector::parse("p").unwrap();
         let element = fragment.select(&sel).next().unwrap();
         assert_eq!(false, element.is_link());
+    }
+
+    #[test]
+    fn test_has_class() {
+        use html5ever::LocalName;
+        let html = "<p class='my_class'>hey there</p>";
+        let fragment = Html::parse_fragment(html);
+        let sel = Selector::parse("p").unwrap();
+        let element = fragment.select(&sel).next().unwrap();
+        assert_eq!(
+            true,
+            element.has_class(&LocalName::from("my_class"), CaseSensitivity::CaseSensitive)
+        );
+
+        let html = "<p>hey there</p>";
+        let fragment = Html::parse_fragment(html);
+        let sel = Selector::parse("p").unwrap();
+        let element = fragment.select(&sel).next().unwrap();
+        assert_eq!(
+            false,
+            element.has_class(&LocalName::from("my_class"), CaseSensitivity::CaseSensitive)
+        );
     }
 
 }

@@ -279,7 +279,8 @@ impl Element {
 
     /// Returns true if element has the class.
     pub fn has_class(&self, class: &str, case_sensitive: CaseSensitivity) -> bool {
-        self.classes.contains(&LocalName::from(class))
+        self.classes()
+            .any(|c| case_sensitive.eq(c.as_bytes(), class.as_bytes()))
     }
 
     /// Returns an iterator over the element's classes.
